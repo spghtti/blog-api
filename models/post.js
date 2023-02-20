@@ -20,4 +20,4 @@ PostSchema.virtual('url').get(function () {
 });
 
 // Export model
-module.exports = mongoose.model('User', PostSchema);
+module.exports = mongoose.model('Post', PostSchema);

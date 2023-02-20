@@ -4,7 +4,6 @@ const async = require('async');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-// const verifyToken = require('../verifyToken');
 
 const passport = require('passport');
 
