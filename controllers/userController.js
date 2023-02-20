@@ -8,10 +8,12 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
 exports.get_allUsers = async (req, res, next) => {
-  User.find({}).exec(function (err, users) {
-    users = users.map((o) => o.toObject());
-    return res.status(200).json(users);
-  });
+  User.find({})
+    .select({ password: 0, date_created: 0 })
+    .exec(function (err, users) {
+      users = users.map((o) => o.toObject());
+      return res.status(200).json(users);
+    });
 };
 
 exports.get_user = async (req, res, next) => {

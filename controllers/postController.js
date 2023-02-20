@@ -37,3 +37,21 @@ exports.get_post = async (req, res, next) => {
     .exec();
   return res.status(200).json(post.toObject());
 };
+
+exports.post_post = async (req, res, next) => {
+  // TODO: Body validation and sanitization
+
+  const post = new Post({
+    title: req.body.title,
+    body: req.body.body,
+    date: req.body.date,
+    isPublished: req.body.isPublished,
+  });
+
+  post.save((err) => {
+    if (err) {
+      return next(err);
+    }
+  });
+  return res.status(200).json(post.toObject());
+};

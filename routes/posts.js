@@ -6,9 +6,7 @@ router.get('/', postController.get_allPosts);
 
 router.get('/:postId', postController.get_post);
 
-router.post('/', (req, res) => {
-  return res.send('POST HTTP method on post resource');
-});
+router.post('/', postController.post_post);
 
 router.put('/', (req, res) => {
   return res.send('PUT HTTP method on post resource');
