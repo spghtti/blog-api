@@ -8,6 +8,9 @@ const jwt = require('jsonwebtoken');
 
 const passport = require('passport');
 
+// TODO: Add error handling
+// TODO: Add body validation and sanitization
+
 exports.get_allPosts = async (req, res, next) => {
   Post.find({}).exec(function (err, posts) {
     posts = posts.map((o) => o.toObject());
@@ -39,13 +42,31 @@ exports.get_post = async (req, res, next) => {
 };
 
 exports.post_post = async (req, res, next) => {
-  // TODO: Body validation and sanitization
+  const post = new Post({
+    title: req.body.title,
+    body: req.body.body,
+    date: req.body.date,
+    isPublished: req.body.isPublished,
+  });
+
+  post.save((err) => {
+    if (err) {
+      return next(err);
+    }
+  });
+  return res.status(200).json(post.toObject());
+};
+
+exports.put_post = async (req, res, next) => {
+  const originalPost = await Post.findById(req.params.postId);
 
   const post = new Post({
     title: req.body.title,
     body: req.body.body,
     date: req.body.date,
     isPublished: req.body.isPublished,
+    _id: req.params.postId,
+    comments: [...originalPost.comments],
   });
 
   post.save((err) => {

@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 
 const passport = require('passport');
 
+// TODO: Add error handling
+// TODO: Add body validation and sanitization
+
 exports.get_allUsers = async (req, res, next) => {
   User.find({})
     .select({ password: 0, date_created: 0 })
@@ -18,6 +21,21 @@ exports.get_allUsers = async (req, res, next) => {
 
 exports.get_user = async (req, res, next) => {
   const user = await User.findById(req.params.userId).exec();
+  return res.status(200).json(user.toObject());
+};
+
+exports.post_user = async (req, res, next) => {
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password,
+    email: req.body.email,
+  });
+
+  user.save((err) => {
+    if (err) {
+      return next(err);
+    }
+  });
   return res.status(200).json(user.toObject());
 };
 

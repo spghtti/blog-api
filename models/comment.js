@@ -8,7 +8,7 @@ const CommentSchema = new Schema({
     ref: 'User',
   },
   body: { type: String, required: true, minLength: 3, maxLength: 1000 },
-  date: { type: Date, default: Date.now() },
+  date: { type: Date, default: Date.now },
 });
 
 // Export model
