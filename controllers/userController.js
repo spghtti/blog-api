@@ -10,7 +10,7 @@ const passport = require('passport');
 // TODO: Add error handling
 // TODO: Add body validation and sanitization
 
-exports.get_allUsers = async (req, res, next) => {
+exports.get_allUsers = (req, res, next) => {
   User.find({})
     .select({ password: 0, date_created: 0 })
     .exec(function (err, users) {
@@ -19,12 +19,12 @@ exports.get_allUsers = async (req, res, next) => {
     });
 };
 
-exports.get_user = async (req, res, next) => {
+exports.get_single_user = async (req, res, next) => {
   const user = await User.findById(req.params.userId).exec();
   return res.status(200).json(user.toObject());
 };
 
-exports.post_user = async (req, res, next) => {
+exports.post_create_user = (req, res, next) => {
   const user = new User({
     username: req.body.username,
     password: req.body.password,
@@ -37,6 +37,39 @@ exports.post_user = async (req, res, next) => {
     }
   });
   return res.status(200).json(user.toObject());
+};
+
+exports.put_update_user = (req, res, next) => {
+  const update = {
+    username: req.body.username,
+    email: req.body.email,
+  };
+
+  User.findByIdAndUpdate(
+    req.params.userId,
+    update,
+    { returnDocument: 'after' },
+    (err, updatedUser) => {
+      if (err) {
+        res.json({
+          updatedUser,
+          success: false,
+          msg: 'Failed to update user',
+        });
+      } else {
+        return res.status(200).json(updatedUser.toObject());
+      }
+    }
+  );
+};
+
+exports.delete_user = (req, res, next) => {
+  User.findByIdAndRemove(req.params.userId, (err) => {
+    if (err) {
+      return next(err);
+    }
+    return res.status(200).json({ message: 'User deleted' });
+  });
 };
 
 // exports.user_login_get = [

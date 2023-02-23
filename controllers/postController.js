@@ -11,14 +11,14 @@ const passport = require('passport');
 // TODO: Add error handling
 // TODO: Add body validation and sanitization
 
-exports.get_allPosts = async (req, res, next) => {
+exports.get_allPosts = (req, res, next) => {
   Post.find({}).exec(function (err, posts) {
     posts = posts.map((o) => o.toObject());
     return res.status(200).json(posts);
   });
 };
 
-exports.get_post = async (req, res, next) => {
+exports.get_single_post = async (req, res, next) => {
   const post = await Post.findById(req.params.postId)
     .populate({
       path: 'comments',
@@ -41,7 +41,7 @@ exports.get_post = async (req, res, next) => {
   return res.status(200).json(post.toObject());
 };
 
-exports.post_post = async (req, res, next) => {
+exports.post_create_post = (req, res, next) => {
   const post = new Post({
     title: req.body.title,
     body: req.body.body,
@@ -57,22 +57,37 @@ exports.post_post = async (req, res, next) => {
   return res.status(200).json(post.toObject());
 };
 
-exports.put_post = async (req, res, next) => {
-  const originalPost = await Post.findById(req.params.postId);
-
-  const post = new Post({
+exports.put_update_post = (req, res, next) => {
+  const update = {
     title: req.body.title,
     body: req.body.body,
     date: req.body.date,
     isPublished: req.body.isPublished,
-    _id: req.params.postId,
-    comments: [...originalPost.comments],
-  });
+  };
 
-  post.save((err) => {
+  Post.findByIdAndUpdate(
+    req.params.postId,
+    update,
+    { returnDocument: 'after' },
+    (err, updatedPost) => {
+      if (err) {
+        res.json({
+          updatedPost,
+          success: false,
+          msg: 'Failed to update post',
+        });
+      } else {
+        return res.status(200).json(updatedPost.toObject());
+      }
+    }
+  );
+};
+
+exports.delete_post = (req, res, next) => {
+  Post.findByIdAndRemove(req.params.postId, (err) => {
     if (err) {
       return next(err);
     }
+    return res.status(200).json({ message: 'Post deleted' });
   });
-  return res.status(200).json(post.toObject());
 };
