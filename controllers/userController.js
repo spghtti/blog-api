@@ -16,10 +16,12 @@ exports.get_allUsers = (req, res, next) => {
     .exec(function (err, users) {
       if (err) {
         return res.status(500).json({ error: err, status: 500 });
-      } else {
-        users = users.map((o) => o.toObject());
-        return res.status(200).json(users);
       }
+      if (!users) {
+        return res.status(404).json({ error: 'No users found', status: 404 });
+      }
+      users = users.map((o) => o.toObject());
+      return res.status(200).json(users);
     });
 };
 
@@ -28,7 +30,7 @@ exports.get_single_user = async (req, res, next) => {
   if (!user)
     return res
       .status(404)
-      .json({ error: 'No user found', status: 500, user: req.params.userId });
+      .json({ error: 'No user found', status: 404, user: req.params.userId });
   return res.status(200).json(user.toObject());
 };
 
@@ -60,9 +62,13 @@ exports.put_update_user = (req, res, next) => {
     (err, updatedUser) => {
       if (err) {
         return res.status(500).json({ error: err, status: 500, user: update });
-      } else {
-        return res.status(200).json(updatedUser.toObject());
       }
+      if (updatedUser === null) {
+        return res
+          .status(404)
+          .json({ error: 'User not found', status: 404, user: update });
+      }
+      return res.status(200).json(updatedUser.toObject());
     }
   );
 };

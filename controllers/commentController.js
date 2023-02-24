@@ -9,13 +9,11 @@ const { body, validationResult } = require('express-validator');
 exports.get_single_comment = async (req, res, next) => {
   const comment = await Comment.findById(req.params.commentId).exec();
   if (!comment)
-    return res
-      .status(404)
-      .json({
-        error: 'Comment not found',
-        status: 404,
-        comment: req.params.commentId,
-      });
+    return res.status(404).json({
+      error: 'Comment not found',
+      status: 404,
+      comment: req.params.commentId,
+    });
   return res.status(200).json(comment.toObject());
 };
 
@@ -64,9 +62,13 @@ exports.put_update_comment = (req, res, next) => {
         return res
           .status(500)
           .json({ error: err, status: 500, comment: update });
-      } else {
-        return res.status(201).json(updatedComment.toObject());
       }
+      if (updatedComment === null) {
+        return res
+          .status(404)
+          .json({ error: 'Not found', status: 404, comment: update });
+      }
+      return res.status(201).json(updatedComment.toObject());
     }
   );
 };
@@ -74,7 +76,7 @@ exports.put_update_comment = (req, res, next) => {
 exports.delete_comment = (req, res, next) => {
   async.parallel(
     {
-      function(callback) {
+      post(callback) {
         Post.findOneAndUpdate(
           { _id: req.params.postId },
           {
@@ -83,7 +85,7 @@ exports.delete_comment = (req, res, next) => {
           callback
         );
       },
-      function(callback) {
+      comment(callback) {
         Comment.findByIdAndRemove(req.params.commentId).exec(callback);
       },
     },
@@ -91,7 +93,15 @@ exports.delete_comment = (req, res, next) => {
       if (err) {
         return res
           .status(500)
-          .json({ error: err, status: 500, comment: req.params.commentId });
+          .json({ error: 'err', status: 500, comment: req.params.commentId });
+      }
+      if (results.post === null || results.comment === null) {
+        return res.status(404).json({
+          error: 'Not found',
+          status: 404,
+          comment: req.params.commentId,
+          post: req.params.postId,
+        });
       }
       return res.status(200).json('Deleted comment');
     }

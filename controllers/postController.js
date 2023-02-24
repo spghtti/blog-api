@@ -20,7 +20,6 @@ exports.get_allPosts = (req, res, next) => {
       return res.status(200).json(posts);
     }
   });
-  return res.status(404).json({ error: 'Comment not found', status: 404 });
 };
 
 exports.get_single_post = async (req, res, next) => {
@@ -44,7 +43,7 @@ exports.get_single_post = async (req, res, next) => {
     })
     .exec();
   if (!post)
-    res.status(404).json({
+    return res.status(404).json({
       error: 'Comment not found',
       status: 404,
       post: req.params.postId,
@@ -62,7 +61,7 @@ exports.post_create_post = (req, res, next) => {
 
   post.save((err) => {
     if (err) {
-      res.status(500).json({ error: err, status: 500, post: post });
+      return res.status(500).json({ error: err, status: 500, post: post });
     }
   });
   return res.status(200).json(post.toObject());
@@ -82,20 +81,31 @@ exports.put_update_post = (req, res, next) => {
     { returnDocument: 'after' },
     (err, updatedPost) => {
       if (err) {
-        res.status(500).json({ error: err, status: 500, post: update });
-      } else {
-        return res.status(200).json(updatedPost.toObject());
+        return res.status(500).json({ error: err, status: 500, post: update });
       }
+      if (updatedPost === null) {
+        return res
+          .status(404)
+          .json({ error: 'Not found', status: 404, post: update });
+      }
+      return res.status(200).json(updatedPost.toObject());
     }
   );
 };
 
 exports.delete_post = (req, res, next) => {
-  Post.findByIdAndRemove(req.params.postId, (err) => {
+  Post.findByIdAndRemove(req.params.postId, (err, deletedPost) => {
     if (err) {
-      res.status(500).json({
+      return res.status(500).json({
         error: err,
         status: 500,
+        post: req.params.postId,
+      });
+    }
+    if (deletedPost === null) {
+      return res.status(404).json({
+        error: 'Not found',
+        status: 404,
         post: req.params.postId,
       });
     }
