@@ -13,9 +13,14 @@ const passport = require('passport');
 
 exports.get_allPosts = (req, res, next) => {
   Post.find({}).exec(function (err, posts) {
-    posts = posts.map((o) => o.toObject());
-    return res.status(200).json(posts);
+    if (err) {
+      return res.status(500).json({ error: err, status: 500 });
+    } else {
+      posts = posts.map((o) => o.toObject());
+      return res.status(200).json(posts);
+    }
   });
+  return res.status(404).json({ error: 'Comment not found', status: 404 });
 };
 
 exports.get_single_post = async (req, res, next) => {
@@ -38,6 +43,12 @@ exports.get_single_post = async (req, res, next) => {
       ],
     })
     .exec();
+  if (!post)
+    res.status(404).json({
+      error: 'Comment not found',
+      status: 404,
+      post: req.params.postId,
+    });
   return res.status(200).json(post.toObject());
 };
 
@@ -51,7 +62,7 @@ exports.post_create_post = (req, res, next) => {
 
   post.save((err) => {
     if (err) {
-      return next(err);
+      res.status(500).json({ error: err, status: 500, post: post });
     }
   });
   return res.status(200).json(post.toObject());
@@ -71,11 +82,7 @@ exports.put_update_post = (req, res, next) => {
     { returnDocument: 'after' },
     (err, updatedPost) => {
       if (err) {
-        res.json({
-          updatedPost,
-          success: false,
-          msg: 'Failed to update post',
-        });
+        res.status(500).json({ error: err, status: 500, post: update });
       } else {
         return res.status(200).json(updatedPost.toObject());
       }
@@ -86,7 +93,11 @@ exports.put_update_post = (req, res, next) => {
 exports.delete_post = (req, res, next) => {
   Post.findByIdAndRemove(req.params.postId, (err) => {
     if (err) {
-      return next(err);
+      res.status(500).json({
+        error: err,
+        status: 500,
+        post: req.params.postId,
+      });
     }
     return res.status(200).json({ message: 'Post deleted' });
   });

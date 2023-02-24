@@ -14,13 +14,21 @@ exports.get_allUsers = (req, res, next) => {
   User.find({})
     .select({ password: 0, date_created: 0 })
     .exec(function (err, users) {
-      users = users.map((o) => o.toObject());
-      return res.status(200).json(users);
+      if (err) {
+        return res.status(500).json({ error: err, status: 500 });
+      } else {
+        users = users.map((o) => o.toObject());
+        return res.status(200).json(users);
+      }
     });
 };
 
 exports.get_single_user = async (req, res, next) => {
   const user = await User.findById(req.params.userId).exec();
+  if (!user)
+    return res
+      .status(404)
+      .json({ error: 'No user found', status: 500, user: req.params.userId });
   return res.status(200).json(user.toObject());
 };
 
@@ -33,7 +41,7 @@ exports.post_create_user = (req, res, next) => {
 
   user.save((err) => {
     if (err) {
-      return next(err);
+      return res.status(500).json({ error: err, status: 500, user: user });
     }
   });
   return res.status(200).json(user.toObject());
@@ -51,11 +59,7 @@ exports.put_update_user = (req, res, next) => {
     { returnDocument: 'after' },
     (err, updatedUser) => {
       if (err) {
-        res.json({
-          updatedUser,
-          success: false,
-          msg: 'Failed to update user',
-        });
+        return res.status(500).json({ error: err, status: 500, user: update });
       } else {
         return res.status(200).json(updatedUser.toObject());
       }
@@ -66,7 +70,9 @@ exports.put_update_user = (req, res, next) => {
 exports.delete_user = (req, res, next) => {
   User.findByIdAndRemove(req.params.userId, (err) => {
     if (err) {
-      return next(err);
+      return res
+        .status(500)
+        .json({ error: err, status: 500, user: req.params.userId });
     }
     return res.status(200).json({ message: 'User deleted' });
   });
