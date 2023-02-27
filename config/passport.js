@@ -5,7 +5,7 @@ const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
-const User = require('./models/user');
+const User = require('../models/user');
 
 require('dotenv').config();
 
@@ -15,18 +15,17 @@ passport.use(
       usernameField: 'email',
       passwordField: 'password',
     },
-    async function (email, password, cb) {
-      const user = await User.findOne({ email }).exec();
+    function (email, password, cb) {
+      return User.findOne({ email, password })
+        .then((user) => {
+          console.log(user);
+          if (!user) {
+            return cb(null, false, { message: 'Incorrect email or password.' });
+          }
 
-      try {
-        if (password == user.password) {
-          return cb(null, user);
-        } else {
-          return cb(null, false, { message: 'Password incorrect' });
-        }
-      } catch (e) {
-        return cb(e);
-      }
+          return cb(null, user, { message: 'Logged In Successfully' });
+        })
+        .catch((err) => cb(err));
     }
   )
 );

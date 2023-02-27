@@ -42,7 +42,7 @@ exports.get_single_post = async (req, res, next) => {
       .exec();
     if (!post)
       return res.status(404).json({
-        error: 'Comment not found',
+        error: 'Post not found',
         status: 404,
         post: req.params.postId,
       });

@@ -7,6 +7,8 @@ const indexRouter = require('./routes/index');
 const userRouter = require('./routes/users');
 const postRouter = require('./routes/posts');
 
+const passport = require('./config/passport');
+
 require('dotenv').config();
 
 const app = express();
@@ -31,7 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', userRouter);
+app.use('/users', passport.authenticate('jwt', { session: false }), userRouter);
 app.use('/posts', postRouter);
 
 // catch 404 and forward to error handler
