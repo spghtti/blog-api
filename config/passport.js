@@ -16,16 +16,16 @@ passport.use(
       passwordField: 'password',
     },
     function (email, password, cb) {
-      return User.findOne({ email, password })
-        .then((user) => {
-          console.log(user);
-          if (!user) {
-            return cb(null, false, { message: 'Incorrect email or password.' });
-          }
+      User.findOne({ email }, (err, user) => {
+        if (err) return cb(err);
 
-          return cb(null, user, { message: 'Logged In Successfully' });
-        })
-        .catch((err) => cb(err));
+        if (!user) return cb(null, false, 'Incorrect username');
+
+        bcrypt.compare(password, user.password, (err, res) => {
+          if (res) return cb(null, user);
+          else return cb(null, false, { message: 'Incorrect password' });
+        });
+      });
     }
   )
 );

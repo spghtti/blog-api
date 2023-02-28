@@ -1,11 +1,10 @@
 const User = require('../models/user');
-
-const async = require('async');
-const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
+const async = require('async');
 
-const passport = require('passport');
+const bcrypt = require('bcrypt');
+const passport = require('../config/passport');
+const jwt = require('jsonwebtoken');
 
 exports.get_allUsers = (req, res, next) => {
   User.find({})
@@ -137,6 +136,78 @@ exports.delete_user = (req, res, next) => {
     return res.status(200).json({ message: 'User deleted' });
   });
 };
+
+exports.user_login_post = (req, res, next) => {
+  passport.authenticate('local', { session: false }, (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({
+        message: 'Incorrect Username or Password',
+        user,
+      });
+    }
+
+    jwt.sign(
+      { _id: user._id, username: user.username, isAdmin: user.isAdmin },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: '1h' },
+      (err, token) => {
+        if (err) return res.status(400).json(err);
+        res.json({
+          token: token,
+          user: {
+            _id: user._id,
+            username: user.username,
+            isAdmin: user.isAdmin,
+          },
+        });
+      }
+    );
+  })(req, res);
+};
+
+exports.user_register_post = [
+  body('username')
+    .trim()
+    .isLength({ min: 3, max: 30 })
+    .withMessage('Name must be 3-100 characters')
+    .custom((value) => !/\s/.test(value))
+    .withMessage('Username must be one word')
+    .escape(),
+  body('email')
+    .trim()
+    .isLength({ min: 4, max: 100 })
+    .withMessage('Email must be 4-100 characters')
+    .isEmail()
+    .withMessage('Email must be an email address')
+    .escape(),
+  body('password')
+    .trim()
+    .isLength({ min: 5, max: 100 })
+    .withMessage('Password  must be 5-500 characters')
+    .escape(),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+
+    const user = new User({
+      username: req.body.username,
+      email: req.body.email,
+      password: hashedPassword,
+    });
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors, status: 400 });
+    }
+
+    user.save((err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.status(200).json('User created');
+    });
+  },
+];
 
 // exports.user_login_get = [
 //   (req, res, next) => {
