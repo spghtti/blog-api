@@ -67,6 +67,13 @@ exports.post_create_post = [
     .isLength({ min: 3 })
     .withMessage('Body must be at least 3 characters')
     .escape(),
+  body('preview')
+    .trim()
+    .isString()
+    .withMessage('Preview must be a string')
+    .isLength({ min: 3 })
+    .withMessage('Preview must be at least 3 characters')
+    .escape(),
   body('date')
     .optional({ checkFalsy: true })
     .trim()
@@ -77,6 +84,14 @@ exports.post_create_post = [
     .trim()
     .isBoolean()
     .withMessage('isPublished must be a boolean')
+    .escape(),
+  body('tags')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isArray()
+    .withMessage('Tags must be an array')
+    .isLength({ min: 1, max: 6 })
+    .withMessage('Must have one to six tags')
     .escape(),
   (req, res, next) => {
     const errors = validationResult(req);

@@ -19,13 +19,6 @@ exports.get_single_comment = async (req, res, next) => {
 };
 
 exports.post_comment = [
-  body('user')
-    .trim()
-    .isString()
-    .withMessage('Username must be a string')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be 3-30 characters')
-    .escape(),
   body('body')
     .trim()
     .isString()
@@ -40,7 +33,7 @@ exports.post_comment = [
       return res.status(400).json({ error: errors, status: 400 });
     }
     const comment = new Comment({
-      user: req.body.user,
+      user: req.user._id,
       body: req.body.body,
     });
 
@@ -66,8 +59,8 @@ exports.post_comment = [
           .status(500)
           .json({ error: err, status: 500, comment: comment });
       }
+      return res.status(201).json(comment.toObject());
     });
-    return res.status(201).json(comment.toObject());
   },
 ];
 
@@ -77,7 +70,7 @@ exports.put_update_comment = [
     .isString()
     .withMessage('Body must be a string')
     .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be 3-30 characters')
+    .withMessage('Body must be 3-30 characters')
     .escape(),
   body('date').trim().isDate().withMessage('Date must be a date').escape(),
   (req, res, next) => {
