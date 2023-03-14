@@ -149,15 +149,15 @@ exports.user_login_post = (req, res, next) => {
     jwt.sign(
       { _id: user._id, username: user.username, isAdmin: user.isAdmin },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '1h' },
+      { expiresIn: '1d' },
       (err, token) => {
         if (err) return res.status(400).json(err);
-        res.json({
+        res.send({
           token: token,
           user: {
             _id: user._id,
             username: user.username,
-            isAdmin: user.isAdmin,
+            message: 'Logged in!',
           },
         });
       }
@@ -187,6 +187,8 @@ exports.user_register_post = [
     .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
+
+    // TODO: Do a check for existing email even though I'm the only one writing posts
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
 

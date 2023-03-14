@@ -25,19 +25,19 @@ exports.get_single_post = async (req, res, next) => {
       .populate({
         path: 'comments',
         model: 'Comment',
-        populate: [
-          {
-            path: 'user',
-            model: 'User',
-            select: {
-              date_created: 0,
-              password: 0,
-              email: 0,
-              password: 0,
-              date: 0,
-            },
-          },
-        ],
+        // populate: [
+        //   {
+        //     path: 'user',
+        //     model: 'User',
+        //     select: {
+        //       date_created: 0,
+        //       password: 0,
+        //       email: 0,
+        //       password: 0,
+        //       date: 0,
+        //     },
+        //   },
+        // ],
       })
       .exec();
     if (!post)

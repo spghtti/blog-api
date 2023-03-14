@@ -26,7 +26,7 @@ router.put(
 
 router.post(
   '/:postId/comments',
-  passport.authenticate('jwt', { session: false }),
+  // passport.authenticate('jwt', { session: false }),
   commentController.post_comment
 );
 

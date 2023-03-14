@@ -26,6 +26,22 @@ exports.post_comment = [
     .isLength({ min: 3, max: 1000 })
     .withMessage('Body name must be 3-1,000 characters')
     .escape(),
+  body('name')
+    .trim()
+    .isString()
+    .withMessage('Name must be a string')
+    .isLength({ min: 3, max: 40 })
+    .withMessage('Body name must be 3-40 characters')
+    .escape(),
+  body('email')
+    .trim()
+    .isString()
+    .withMessage('Email must be a string')
+    .isEmail()
+    .withMessage('Email must be an email address')
+    .isLength({ min: 3, max: 40 })
+    .withMessage('Email name must be 3-40 characters')
+    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -33,7 +49,8 @@ exports.post_comment = [
       return res.status(400).json({ error: errors, status: 400 });
     }
     const comment = new Comment({
-      user: req.user._id,
+      name: req.body.name,
+      email: req.body.email,
       body: req.body.body,
     });
 
@@ -69,8 +86,24 @@ exports.put_update_comment = [
     .trim()
     .isString()
     .withMessage('Body must be a string')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Body must be 3-30 characters')
+    .isLength({ min: 3, max: 1000 })
+    .withMessage('Body name must be 3-1,000 characters')
+    .escape(),
+  body('name')
+    .trim()
+    .isString()
+    .withMessage('Name must be a string')
+    .isLength({ min: 3, max: 40 })
+    .withMessage('Body name must be 3-40 characters')
+    .escape(),
+  body('email')
+    .trim()
+    .isString()
+    .withMessage('Email must be a string')
+    .isEmail()
+    .withMessage('Email must be an email address')
+    .isLength({ min: 3, max: 40 })
+    .withMessage('Email name must be 3-40 characters')
     .escape(),
   body('date').trim().isDate().withMessage('Date must be a date').escape(),
   (req, res, next) => {
@@ -79,8 +112,9 @@ exports.put_update_comment = [
     }
 
     const update = {
+      name: req.body.name,
+      email: req.body.email,
       body: req.body.body,
-      date: req.body.date,
     };
 
     Comment.findByIdAndUpdate(
