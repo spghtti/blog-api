@@ -155,7 +155,9 @@ exports.delete_comment = (req, res, next) => {
       },
     },
     (err, results) => {
+      console.log(req.params);
       if (err) {
+        console.log(err);
         return res
           .status(500)
           .json({ error: 'err', status: 500, comment: req.params.commentId });

@@ -188,7 +188,7 @@ exports.user_register_post = [
   async (req, res, next) => {
     const errors = validationResult(req);
 
-    // TODO: Do a check for existing email even though I'm the only one writing posts
+    // TODO: check for existing email even though I'm the only one writing posts
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
 

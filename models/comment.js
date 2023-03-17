@@ -7,9 +7,9 @@ const CommentSchema = new Schema({
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: 'User',
   // },
-  name: { type: String, required: true, minLength: 3, maxLength: 40 },
+  name: { type: String, required: true, minLength: 3, maxLength: 60 },
   email: { type: String, required: true, minLength: 3, maxLength: 60 },
-  body: { type: String, required: true, minLength: 3, maxLength: 1000 },
+  body: { type: String, required: true, minLength: 3, maxLength: 2000 },
   date: { type: Date, default: Date.now },
 });
 

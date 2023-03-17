@@ -8,6 +8,17 @@ const jwt = require('jsonwebtoken');
 
 const passport = require('passport');
 
+exports.get_posts = (req, res, next) => {
+  Post.find({}).exec(function (err, posts) {
+    if (err) {
+      return res.status(500).json({ error: err, status: 500 });
+    } else {
+      posts = posts.map((o) => o.isPublished && o.toObject());
+      return res.status(200).json(posts);
+    }
+  });
+};
+
 exports.get_allPosts = (req, res, next) => {
   Post.find({}).exec(function (err, posts) {
     if (err) {
@@ -152,8 +163,9 @@ exports.put_update_post = [
     const update = {
       title: req.body.title,
       body: req.body.body,
-      date: req.body.date,
       isPublished: req.body.isPublished,
+      tags: req.body.tags,
+      updated: Date.now(),
     };
 
     Post.findByIdAndUpdate(

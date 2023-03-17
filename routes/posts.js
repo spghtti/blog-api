@@ -6,7 +6,13 @@ const commentController = require('../controllers/commentController');
 const passport = require('../config/passport');
 const verifyAdmin = require('../config/verifyAdmin');
 
-router.get('/', postController.get_allPosts);
+router.get('/', postController.get_posts);
+router.get(
+  '/all',
+  passport.authenticate('jwt', { session: false }),
+  verifyAdmin,
+  postController.get_allPosts
+);
 
 router.post(
   '/',
