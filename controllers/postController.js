@@ -118,8 +118,6 @@ exports.post_create_post = [
       isPublished: req.body.isPublished,
     });
 
-    console.log(post);
-
     post.save((err) => {
       if (err) {
         return res.status(500).json({ error: err, status: 500, post: post });
@@ -172,7 +170,6 @@ exports.put_update_post = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      console.log(errors);
       return res.status(400).json({ error: errors, status: 400 });
     }
 
