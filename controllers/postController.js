@@ -96,13 +96,11 @@ exports.post_create_post = [
     .isBoolean()
     .withMessage('isPublished must be a boolean')
     .escape(),
-  body('tags')
+  body('tags.*')
     .optional({ checkFalsy: true })
     .trim()
-    .isArray()
-    .withMessage('Tags must be an array')
-    .isLength({ min: 1, max: 6 })
-    .withMessage('Must have one to six tags')
+    .isString()
+    .withMessage('Tag must be a string')
     .escape(),
   (req, res, next) => {
     const errors = validationResult(req);
@@ -113,17 +111,21 @@ exports.post_create_post = [
 
     const post = new Post({
       title: req.body.title,
+      preview: req.body.preview,
+      tags: req.body.tags,
       body: req.body.body,
       date: req.body.date,
       isPublished: req.body.isPublished,
     });
 
+    console.log(post);
+
     post.save((err) => {
       if (err) {
         return res.status(500).json({ error: err, status: 500, post: post });
       }
+      return res.status(200).json(post.toObject());
     });
-    return res.status(200).json(post.toObject());
   },
 ];
 
@@ -135,12 +137,25 @@ exports.put_update_post = [
     .isLength({ min: 3 })
     .withMessage('Title must be at least 3 characters')
     .escape(),
+  body('preview')
+    .trim()
+    .isString()
+    .withMessage('Preview must be a string')
+    .isLength({ min: 3 })
+    .withMessage('Preview must be at least 3 characters')
+    .escape(),
   body('body')
     .trim()
     .isString()
     .withMessage('Body must be a string')
     .isLength({ min: 3 })
     .withMessage('Body must be at least 3 characters')
+    .escape(),
+  body('tags.*')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isString()
+    .withMessage('Tag must be a string')
     .escape(),
   body('date')
     .optional({ checkFalsy: true })
@@ -157,11 +172,13 @@ exports.put_update_post = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+      console.log(errors);
       return res.status(400).json({ error: errors, status: 400 });
     }
 
     const update = {
       title: req.body.title,
+      preview: req.body.preview,
       body: req.body.body,
       isPublished: req.body.isPublished,
       tags: req.body.tags,

@@ -155,7 +155,6 @@ exports.delete_comment = (req, res, next) => {
       },
     },
     (err, results) => {
-      console.log(req.params);
       if (err) {
         console.log(err);
         return res
