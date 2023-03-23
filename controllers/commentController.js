@@ -1,7 +1,6 @@
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const async = require('async');
-const ObjectId = require('mongoose').Types.ObjectId;
 const { body, validationResult } = require('express-validator');
 
 exports.get_single_comment = async (req, res, next) => {

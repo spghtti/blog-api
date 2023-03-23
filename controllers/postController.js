@@ -26,23 +26,12 @@ exports.get_allPosts = (req, res, next) => {
 
 exports.get_single_post = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.postId)
+    const post = await Post.findByIdAndUpdate(req.params.postId, {
+      $inc: { views: 1 },
+    })
       .populate({
         path: 'comments',
         model: 'Comment',
-        // populate: [
-        //   {
-        //     path: 'user',
-        //     model: 'User',
-        //     select: {
-        //       date_created: 0,
-        //       password: 0,
-        //       email: 0,
-        //       password: 0,
-        //       date: 0,
-        //     },
-        //   },
-        // ],
       })
       .exec();
     if (!post)
