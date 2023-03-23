@@ -1,6 +1,7 @@
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const async = require('async');
+const ObjectId = require('mongoose').Types.ObjectId;
 const { body, validationResult } = require('express-validator');
 
 exports.get_single_comment = async (req, res, next) => {
@@ -142,13 +143,7 @@ exports.delete_comment = (req, res, next) => {
   async.parallel(
     {
       post(callback) {
-        Post.findOneAndUpdate(
-          { _id: req.params.postId },
-          {
-            $pull: { comments: req.params.commentId },
-          },
-          callback
-        );
+        Post.findOneAndUpdate({ _id: req.params.postId }).exec(callback);
       },
       comment(callback) {
         Comment.findByIdAndRemove(req.params.commentId).exec(callback);
@@ -156,7 +151,6 @@ exports.delete_comment = (req, res, next) => {
     },
     (err, results) => {
       if (err) {
-        console.log(err);
         return res
           .status(500)
           .json({ error: 'err', status: 500, comment: req.params.commentId });
@@ -169,6 +163,8 @@ exports.delete_comment = (req, res, next) => {
           post: req.params.postId,
         });
       }
+      results.post.comments.pull({ _id: req.params.commentId });
+      results.post.save();
       return res.status(200).json('Deleted comment');
     }
   );

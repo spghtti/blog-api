@@ -1,12 +1,6 @@
 const Post = require('../models/post');
 const Comment = require('../models/comment');
-
-const async = require('async');
-const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-
-const passport = require('passport');
 
 exports.get_posts = (req, res, next) => {
   Post.find({}).exec(function (err, posts) {
@@ -76,8 +70,7 @@ exports.post_create_post = [
     .isString()
     .withMessage('Body must be a string')
     .isLength({ min: 3 })
-    .withMessage('Body must be at least 3 characters')
-    .escape(),
+    .withMessage('Body must be at least 3 characters'),
   body('preview')
     .trim()
     .isString()
@@ -147,8 +140,7 @@ exports.put_update_post = [
     .isString()
     .withMessage('Body must be a string')
     .isLength({ min: 3 })
-    .withMessage('Body must be at least 3 characters')
-    .escape(),
+    .withMessage('Body must be at least 3 characters'),
   body('tags.*')
     .optional({ checkFalsy: true })
     .trim()
