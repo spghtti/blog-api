@@ -3,28 +3,29 @@ const Comment = require('../models/comment');
 const { body, validationResult } = require('express-validator');
 
 exports.get_posts = (req, res, next) => {
-  Post.find({}).exec(function (err, posts) {
-    if (err) {
-      return res.status(500).json({ error: err, status: 500 });
-    } else {
-      // posts = posts.map((o) => {
-      //   if (o.isPublished) return o.toObject();
-      // });
-      posts = posts.filter((post) => post.isPublished);
-      return res.status(200).json(posts);
-    }
-  });
+  Post.find({})
+    .sort({ date: -1 })
+    .exec(function (err, posts) {
+      if (err) {
+        return res.status(500).json({ error: err, status: 500 });
+      } else {
+        posts = posts.filter((post) => post.isPublished);
+        return res.status(200).json(posts);
+      }
+    });
 };
 
 exports.get_allPosts = (req, res, next) => {
-  Post.find({}).exec(function (err, posts) {
-    if (err) {
-      return res.status(500).json({ error: err, status: 500 });
-    } else {
-      posts = posts.map((o) => o.toObject());
-      return res.status(200).json(posts);
-    }
-  });
+  Post.find({})
+    .sort({ date: -1 })
+    .exec(function (err, posts) {
+      if (err) {
+        return res.status(500).json({ error: err, status: 500 });
+      } else {
+        posts = posts.map((o) => o.toObject());
+        return res.status(200).json(posts);
+      }
+    });
 };
 
 exports.get_single_post = async (req, res, next) => {
