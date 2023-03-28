@@ -36,6 +36,7 @@ exports.get_single_post = async (req, res, next) => {
       .populate({
         path: 'comments',
         model: 'Comment',
+        select: '-email',
       })
       .exec();
     if (!post)
