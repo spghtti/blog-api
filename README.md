@@ -15,6 +15,8 @@ This is a solution to the Odin's Project's [assignment](https://www.theodinproje
 
 - [NodeJS](https://nodejs.org/en)
 - [Express](https://expressjs.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
 - [Passport](https://www.passportjs.org/)
 
 ## License
