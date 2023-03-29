@@ -2,21 +2,14 @@
 
 ## About this project
 
-A RESTful blog API that serves handles backend logic for my personal blog. This is a solution to the Odin's Project's [assignment](https://www.theodinproject.com/lessons/nodejs-blog-api) as part of its Full-Stack Javascript curriculum.
+A RESTful blog API that serves handles backend logic for my [personal blog](https://github.com/spghtti/portfolio). Posts are managed via a separate [custom CMS](https://github.com/spghtti/blog-cms).
 
-## Live project demo
+This is a solution to the Odin's Project's [assignment](https://www.theodinproject.com/lessons/nodejs-blog-api) as part of its Full-Stack Javascript curriculum.
 
-:point_right: [Click here]() :point_left:
+## Features
 
-## Run locally
-
-```
-git clone https://github.com/spghtti/blog-api.git
-cd blog-api
-npm install
-npm run start
-
-```
+- View blog posts and comments
+- Admin routes to publish, edit and delete posts
 
 ## Built With
 
