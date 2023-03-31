@@ -8,8 +8,9 @@ This is a solution to the Odin's Project's [assignment](https://www.theodinproje
 
 ## Features
 
-- View blog posts and comments
+- View blog posts
 - Publish, unpublish, edit and delete posts
+- Comment on articles
 - Admin authentication and authorization via JSON web tokens (JWT)
 
 ## Built With
@@ -18,7 +19,8 @@ This is a solution to the Odin's Project's [assignment](https://www.theodinproje
 - [Express](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
 - [Mongoose](https://mongoosejs.com/)
-- [Passport](https://www.passportjs.org/)
+- [Express Validator](https://express-validator.github.io)
+- [Passport + JWT](https://www.passportjs.org/)
 
 ## License
 
