@@ -9,7 +9,8 @@ This is a solution to the Odin's Project's [assignment](https://www.theodinproje
 ## Features
 
 - View blog posts and comments
-- Admin routes to publish, edit and delete posts
+- Publish, unpublish, edit and delete posts
+- Admin authentication and authorization via JSON web tokens (JWT)
 
 ## Built With
 
